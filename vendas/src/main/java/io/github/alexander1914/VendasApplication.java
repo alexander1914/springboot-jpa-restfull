@@ -1,7 +1,7 @@
 package io.github.alexander1914;
 
 import io.github.alexander1914.domain.entity.Cliente;
-import io.github.alexander1914.domain.repository.ClientesRepository;
+import io.github.alexander1914.domain.repository.ClienteRepositoryJpa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,34 +17,35 @@ import java.util.List;
 @SpringBootApplication
 public class VendasApplication {
 
+    //TODO: Implemetando o JPA
     @Bean
-    public CommandLineRunner init(@Autowired ClientesRepository clientesRepository){
+    public CommandLineRunner init(@Autowired ClienteRepositoryJpa clienteRepositoryJpa){
         return args -> {
             System.out.println("Salvando clientes ...");
-            clientesRepository.salvar(new Cliente(1,"Alexander"));
-            clientesRepository.salvar(new Cliente(2,"Outro Cliente"));
+            clienteRepositoryJpa.save(new Cliente(1,"Alexander"));
+            clienteRepositoryJpa.save(new Cliente(2,"Outro Cliente"));
 
-            List<Cliente> todosClientes = clientesRepository.obterTodos();
+            List<Cliente> todosClientes = clienteRepositoryJpa.findAll();
             todosClientes.forEach(System.out::println);
 
             System.out.println("Atualizando clientes ...");
             todosClientes.forEach(c -> {
                 c.setNome(c.getNome() + " atualizado.");
-                clientesRepository.atualizar(c);
+                clienteRepositoryJpa.save(c);
             });
 
-            todosClientes = clientesRepository.obterTodos();
+            todosClientes = clienteRepositoryJpa.findAll();
             todosClientes.forEach(System.out::println);
 
             System.out.println("Buscando clientes ...");
-            clientesRepository.buscarPorNome("Cli").forEach(System.out::println);
+            clienteRepositoryJpa.findByNomeLike("Cli").forEach(System.out::println);
 
             System.out.println("Deletando clientes ...");
-              clientesRepository.obterTodos().forEach(c -> {
-                clientesRepository.deletar(c);
+            clienteRepositoryJpa.findAll().forEach(c -> {
+                clienteRepositoryJpa.delete(c);
             });
 
-            todosClientes = clientesRepository.obterTodos();
+            todosClientes = clienteRepositoryJpa.findAll();
             if(todosClientes.isEmpty()){
                 System.out.println("Nenhum cliente encontrado.");
             }else{

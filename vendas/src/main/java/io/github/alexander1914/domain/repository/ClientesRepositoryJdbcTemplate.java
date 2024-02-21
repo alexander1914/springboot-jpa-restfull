@@ -13,7 +13,7 @@ import java.util.List;
 //TODO: @Repository é uma anotation que difine sua classe como uma ORM,
 // para acessar a base de dados e fazer transacoes.
 @Repository
-public class ClientesRepository {
+public class ClientesRepositoryJdbcTemplate {
     private static String SELECT_ALL = "SELECT * FROM CLIENTE ";
     private static String INSERT = "INSERT INTO cliente (nome) VALUES (?) ";
     private static String UPDATE = "UPDATE cliente SET nome = ? WHERE id = ? ";

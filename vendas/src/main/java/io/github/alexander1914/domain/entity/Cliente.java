@@ -1,6 +1,21 @@
 package io.github.alexander1914.domain.entity;
+
+import javax.persistence.*;
+
+//TODO: @Entity é uma anotation para mapear a tabela como uma entidade.
+//TODO: @Table é uma anotation para marcar a entidade e para fazer as definiçoes dela.
+@Entity
+@Table( name = "cliente" )
 public class Cliente {
+
+    //TODO: @Id é uma anotation é obrigatória para uma entidade.
+    //TODO: @GeneratedValue é uma anotation para definir a strategy da entidade.
+    //TODO: @Column é uma anotation para definiçoes da coluna.
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Integer id;
+    @Column(name = "nome", length = 100)
     private String nome;
 
     public Cliente(){}
