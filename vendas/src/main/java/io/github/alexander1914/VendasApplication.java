@@ -22,8 +22,17 @@ public class VendasApplication {
     public CommandLineRunner init(@Autowired ClienteRepositoryJpa clienteRepositoryJpa){
         return args -> {
             System.out.println("Salvando clientes ...");
-            clienteRepositoryJpa.save(new Cliente(1,"Alexander"));
-            clienteRepositoryJpa.save(new Cliente(2,"Outro Cliente"));
+            clienteRepositoryJpa.save(new Cliente(1,"Alexander Pereira Oliveira"));
+            clienteRepositoryJpa.save(new Cliente(2,"Bruna Carlos"));
+
+            boolean existe = clienteRepositoryJpa.existsByNome("Alexander");
+            System.out.println("Existe essa pessoa com esse nome: " + existe);
+
+            List<Cliente> cliente = clienteRepositoryJpa.findByNomeOrIdOrderById("Alexander", 1);
+            System.out.println("Nome: " + cliente.get(0).getNome());
+
+            cliente = clienteRepositoryJpa.encontrarPorNome("Bruna Carlos");
+            System.out.println("Nome: " + cliente.get(0).getNome());
 
             List<Cliente> todosClientes = clienteRepositoryJpa.findAll();
             todosClientes.forEach(System.out::println);
