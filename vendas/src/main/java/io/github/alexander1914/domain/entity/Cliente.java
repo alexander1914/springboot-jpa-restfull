@@ -1,6 +1,7 @@
 package io.github.alexander1914.domain.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 //TODO: @Entity é uma anotation para mapear a tabela como uma entidade.
 //TODO: @Table é uma anotation para marcar a entidade e para fazer as definiçoes dela.
@@ -17,6 +18,11 @@ public class Cliente {
     private Integer id;
     @Column(name = "nome", length = 100)
     private String nome;
+
+    //TODO: OneToMany: é uma anotation para definir o mapeamento entre as entidades, um para muitos.
+    // OBS: a propriedade mappedBy para mapear com a outra entidade.
+    @OneToMany( mappedBy = "cliente", fetch = FetchType.LAZY)
+    private Set<Pedido> pedidos;
 
     public Cliente(){}
 
@@ -38,6 +44,14 @@ public class Cliente {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public Set<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(Set<Pedido> pedidos) {
+        this.pedidos = pedidos;
     }
 
     @Override

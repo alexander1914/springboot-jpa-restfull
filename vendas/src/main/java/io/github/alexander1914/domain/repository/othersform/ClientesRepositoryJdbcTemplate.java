@@ -1,4 +1,4 @@
-package io.github.alexander1914.domain.repository;
+package io.github.alexander1914.domain.repository.othersform;
 
 import io.github.alexander1914.domain.entity.Cliente;
 import org.springframework.beans.factory.annotation.Autowired;
