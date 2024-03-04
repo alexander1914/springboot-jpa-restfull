@@ -1,5 +1,7 @@
 package io.github.alexander1914.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -18,9 +20,13 @@ public class Cliente {
     private Integer id;
     @Column(name = "nome", length = 100)
     private String nome;
+    @Column(name = "cpf", length = 11)
+    private String cpf;
 
     //TODO: OneToMany: é uma anotation para definir o mapeamento entre as entidades, um para muitos.
     // OBS: a propriedade mappedBy para mapear com a outra entidade.
+    //TODO: @JsonIgnore é uma anotation para remover do objeto.
+    @JsonIgnore
     @OneToMany( mappedBy = "cliente", fetch = FetchType.LAZY)
     private Set<Pedido> pedidos;
 
@@ -44,6 +50,14 @@ public class Cliente {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public Set<Pedido> getPedidos() {
