@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 //TODO: @SpringBootApplication: para definir a class main para o spring.
 
-//TODO: @ComponentScan: é utiliza para scanear o componentes de configuração,
+//TODO: @ComponentScan: é utilizada para scanear o componentes de configuração,
 // services e repositories do spring.
 @SpringBootApplication
 public class VendasApplication {
