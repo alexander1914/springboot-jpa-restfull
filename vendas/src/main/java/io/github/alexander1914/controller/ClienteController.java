@@ -26,10 +26,10 @@ public class ClienteController {
     //TODO: @PathVariable: é uma anotation para receber dados por paremtro no spring.
     //TODO: @ResponseBody: é uma anotation para definir o corpo da minha resposta.
 
-    //TODO: @GetMapping: é uma anotation definida pelo spring para metodo HTTP com o request mapping.
-    //TODO: @PostMapping: é uma anotation definida para criar uma entidade na base dados pelo spring.
-    //TODO: @PutMapping: é uma anotation definida para atualizar uma entidade na base dados pelo spring.
-    //TODO: @DeleteMapping: é uma anotation definida para remover uma entidade na base de dados pelo spring.
+    //TODO: @GetMapping: é uma anotation definida pelo spring para metodo HTTP para fazer buscas com o request mapping.
+    //TODO: @PostMapping: é uma anotation definida para criar uma entidade na base dados pelo spring com o request mapping.
+    //TODO: @PutMapping: é uma anotation definida para atualizar uma entidade na base dados pelo spring com o request mapping.
+    //TODO: @DeleteMapping: é uma anotation definida para remover uma entidade na base de dados pelo spring com o request mapping.
     @GetMapping("{id}")
     public Cliente getClienteById(@PathVariable Integer id) {
         //TODO: ResponseEntity: é um objeto que representa o corpo da resposta HTTP.
@@ -37,6 +37,18 @@ public class ClienteController {
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND,
                                 "Cliente nao encontrado"));
+    }
+
+    @GetMapping
+    public List<Cliente> findFiltro(Cliente filtro) {
+        //TODO: ExampleMatcher é um do spring para definir a sua estrategia para a sua pesquisa.
+        ExampleMatcher matcher = ExampleMatcher
+                .matching()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        Example example = Example.of(filtro, matcher);
+        return clientesRepositoryJpa.findAll(example);
     }
 
     @PostMapping
@@ -69,17 +81,4 @@ public class ClienteController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT,
                         "Cliente nao encontrado"));
     }
-
-    @GetMapping
-    public List<Cliente> findFiltro(Cliente filtro) {
-        //TODO: ExampleMatcher é um do spring para definir a sua estrategia para a sua pesquisa.
-        ExampleMatcher matcher = ExampleMatcher
-                .matching()
-                .withIgnoreCase()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
-
-        Example example = Example.of(filtro, matcher);
-        return clientesRepositoryJpa.findAll(example);
-    }
-
 }
