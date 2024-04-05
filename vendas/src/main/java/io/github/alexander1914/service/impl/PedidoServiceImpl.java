@@ -4,12 +4,14 @@ import io.github.alexander1914.domain.entity.Cliente;
 import io.github.alexander1914.domain.entity.ItemPedido;
 import io.github.alexander1914.domain.entity.Pedido;
 import io.github.alexander1914.domain.entity.Produto;
+import io.github.alexander1914.domain.enums.StatusPedido;
 import io.github.alexander1914.domain.repository.ClientesRepositoryJpa;
 import io.github.alexander1914.domain.repository.ItemsPedidoRepositoryJpa;
 import io.github.alexander1914.domain.repository.PedidosRepositoryJpa;
 import io.github.alexander1914.domain.repository.ProdutosRepositoryJpa;
 import io.github.alexander1914.dto.ItemPedidoDTO;
 import io.github.alexander1914.dto.PedidoDTO;
+import io.github.alexander1914.exception.PedidoNaoEncontradoException;
 import io.github.alexander1914.exception.RegraNegocioException;
 import io.github.alexander1914.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +50,30 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setTotal(pedidoDTO.getTotal());
         pedido.setDataPedido(LocalDate.now());
         pedido.setCliente(cliente);
+        pedido.setStatus(StatusPedido.REALIZADO);
 
-        List<ItemPedido> itemPedidos = converterItems(pedido, pedidoDTO.getItems());
+        List<ItemPedido> itemPedidos = converterItems(pedido, pedidoDTO.getItens());
         pedidosRepositoryJpa.save(pedido);
         itemsPedidoRepositoryJpa.saveAll(itemPedidos);
-        pedido.setItems(itemPedidos);
+        pedido.setItens(itemPedidos);
 
         return pedido;
+    }
+
+    @Override
+    public Optional<Pedido> obterPedidoCompleto(Integer id) {
+        return pedidosRepositoryJpa.findByIdFetchItens(id);
+    }
+
+    @Override
+    @Transactional
+    public void AtualizaStatus(Integer id, StatusPedido statusPedido) {
+        pedidosRepositoryJpa.
+                findById(id)
+                .map(pedido -> {
+                    pedido.setStatus(statusPedido);
+                    return pedidosRepositoryJpa.save(pedido);
+                }).orElseThrow(() -> new PedidoNaoEncontradoException());
     }
 
     //TODO: Aplicando os conceitos de SOLID - S uma responsabilidade para cada metódo ou class.

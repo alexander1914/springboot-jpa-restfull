@@ -1,5 +1,6 @@
 package io.github.alexander1914.domain.entity;
 
+import io.github.alexander1914.domain.enums.StatusPedido;
 import lombok.*;
 
 import javax.persistence.*;
@@ -33,8 +34,13 @@ public class Pedido {
     @Column(name = "total", precision = 20, scale = 2)
     private BigDecimal total;
 
+    //TODO: @Enumerated: é uma anotation do spring para definir um objeto como enum.
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StatusPedido status;
+
     //TODO: OneToMany: é uma anotation para definir o mapeamento entre as entidades, um para muitos.
     // OBS: a propriedade mappedBy para mapear com a outra entidade.
     @OneToMany(mappedBy = "pedido")
-    private List<ItemPedido> items;
+    private List<ItemPedido> itens;
 }
