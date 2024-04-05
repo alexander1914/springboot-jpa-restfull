@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -53,14 +54,20 @@ public class ClienteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente save(@RequestBody Cliente cliente) {
+    public Cliente save(@RequestBody
+                            @Valid  Cliente cliente) {
+        //TODO: @Valid: é uma anotation do spring para fazer as validações de acordo como foi definido pela sua Entity.
+
         return clientesRepositoryJpa.save(cliente);
     }
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable Integer id,
-                                 @RequestBody Cliente cliente) {
+                       @RequestBody
+                       @Valid Cliente cliente) {
+        //TODO: @Valid: é uma anotation do spring para fazer as validações de acordo como foi definido pela sua Entity.
+
         clientesRepositoryJpa
                 .findById(id)
                 .map(clienteExistente -> {

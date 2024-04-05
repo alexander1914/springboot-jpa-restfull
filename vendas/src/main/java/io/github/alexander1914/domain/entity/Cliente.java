@@ -2,8 +2,10 @@ package io.github.alexander1914.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.validator.constraints.br.CPF;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.Set;
 
 //TODO: @Entity é uma anotation para mapear a tabela como uma entidade.
@@ -28,8 +30,12 @@ public class Cliente {
     @Column(name = "id")
     private Integer id;
     @Column(name = "nome", length = 100)
+    //TODO: @NotEmpty: é uma anotation do spring para aplicar validações.
+    @NotEmpty(message = "campo nome é obrigatório.")
     private String nome;
     @Column(name = "cpf", length = 11)
+    @CPF(message = "Informe um CPF válido")
+    @NotEmpty(message = "Campo CPF é obrigatório.")
     private String cpf;
 
     //TODO: OneToMany: é uma anotation para definir o mapeamento entre as entidades, um para muitos.

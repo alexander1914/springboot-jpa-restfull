@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.validation.Valid;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +30,9 @@ public class PedidoController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public Integer save(@RequestBody PedidoDTO pedidoDTO){
+    public Integer save(@RequestBody
+                            @Valid PedidoDTO pedidoDTO){
+        //TODO: @Valid: é uma anotation do spring para fazer as validações de acordo como foi definido pela sua Entity.
          Pedido pedido = pedidoService.salvar(pedidoDTO);
         return pedido.getId();
     }
