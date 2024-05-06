@@ -1,6 +1,9 @@
 package io.github.alexander1914.config;
 
+import io.github.alexander1914.service.impl.UsuarioServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,15 +23,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // OBS: ele recebe uma senha e criptografa essa senha, ele sempre cria um hash diferente.
         return new BCryptPasswordEncoder();
     }
+
+    @Autowired
+    private UsuarioServiceImpl usuarioService;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         //TODO: Implementando um configuração básica do objeto AuthenticationManagerBuilder
         // OBS: neste caso em memória.
-        auth.inMemoryAuthentication()
-                .passwordEncoder(passwordEncoder())
-                .withUser("alexander")
-                .password(passwordEncoder().encode("1914"))
-                .roles("USER", "ADMIN");
+        auth
+                .userDetailsService(usuarioService)
+                .passwordEncoder(passwordEncoder());
     }
     //TODO: esse método é para definir toda a parte de autorição
     // Autorização
@@ -38,16 +43,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // OBS: Aplicando os controles de acesso.
         httpSecurity
                 .csrf().disable()
-                .authorizeRequests()
+                    .authorizeRequests()
                 .antMatchers("/api/clientes/**")
-                .hasAnyRole("USER", "ADMIN")
+                    .hasAnyRole("USER", "ADMIN")
 
                 .antMatchers("/api/pedidos/**")
-                .hasRole( "ADMIN")
+                    .hasRole( "ADMIN")
 
                 .antMatchers("/api/produtos/**")
-                .hasAnyRole("USER", "ADMIN")
+                    .hasAnyRole("USER", "ADMIN")
 
+                .antMatchers(HttpMethod.POST, "/api/usuarios/**")
+                    .permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .httpBasic();//TODO: é uma forma simples para acessar por header passandos os parametros.
                 //.formLogin(); //TODO: VIA login
