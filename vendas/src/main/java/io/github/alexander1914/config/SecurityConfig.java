@@ -1,5 +1,7 @@
 package io.github.alexander1914.config;
 
+import io.github.alexander1914.security.jwt.JwtAuthFilter;
+import io.github.alexander1914.security.jwt.JwtService;
 import io.github.alexander1914.service.impl.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,12 +10,26 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 //TODO: @EnableWebSecurity: é uma anotation do spring security para definir as configurações para esse objeto.
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private UsuarioServiceImpl usuarioService;
+    @Autowired
+    private JwtService jwtService;
+
+    //TODO: Implementando o filtre com jwt
+    @Bean
+    public OncePerRequestFilter jwtFilter(){
+        return new JwtAuthFilter(jwtService, usuarioService);
+    }
 
     //TODO: é para fazer autenticação dos usuários do security
     // Autenticação
@@ -23,9 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // OBS: ele recebe uma senha e criptografa essa senha, ele sempre cria um hash diferente.
         return new BCryptPasswordEncoder();
     }
-
-    @Autowired
-    private UsuarioServiceImpl usuarioService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -57,7 +70,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .httpBasic();//TODO: é uma forma simples para acessar por header passandos os parametros.
+                //TODO: Implementando para nâo ter mais sessões
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+                //.httpBasic();//TODO: é uma forma simples para acessar por header passandos os parametros.
                 //.formLogin(); //TODO: VIA login
     }
 }
