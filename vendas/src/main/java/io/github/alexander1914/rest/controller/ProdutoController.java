@@ -1,8 +1,11 @@
-package io.github.alexander1914.controller;
+package io.github.alexander1914.rest.controller;
 
 import io.github.alexander1914.domain.entity.Produto;
 import io.github.alexander1914.domain.repository.ProdutosRepositoryJpa;
-import net.bytebuddy.asm.Advice;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -15,6 +18,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
+
 @RestController
 @RequestMapping("/api/produtos")
 public class ProdutoController {
@@ -22,16 +26,26 @@ public class ProdutoController {
     private ProdutosRepositoryJpa produtosRepositoryJpa;
 
     @GetMapping("{id}")
-    public Produto findByIdProduto(@PathVariable Integer id){
+    @ApiOperation("Obter detalhes de um produto")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Produto encontrado"),
+            @ApiResponse(code = 404, message = "Produto não encontrado para o ID informado")
+    })
+    public Produto findByIdProduto(@PathVariable @ApiParam("Id do produto") Integer id) {
         return produtosRepositoryJpa
                 .findById(id)
-                .orElseThrow( () ->
+                .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND,
                                 "Produto nao encontrado."));
     }
 
     @GetMapping
-    public List<Produto> findAllProdutos(Produto filtro){
+    @ApiOperation("Obter todos os produtos")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Produto encontrado no filtro"),
+            @ApiResponse(code = 404, message = "Produto não encontrado pelo filtro")
+    })
+    public List<Produto> findAllProdutos(Produto filtro) {
         ExampleMatcher matcher = ExampleMatcher
                 .matching()
                 .withIgnoreCase()
@@ -44,8 +58,13 @@ public class ProdutoController {
 
     @PostMapping
     @ResponseStatus(CREATED)
+    @ApiOperation("Salvar um produto para o cliente")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Produto salvo com sucesso"),
+            @ApiResponse(code = 400, message = "Erro de validação")
+    })
     public Produto save(@RequestBody
-                            @Valid Produto produto){
+                        @Valid Produto produto) {
         //TODO: @Valid: é uma anotation do spring para fazer as validações de acordo como foi definido pela sua Entity.
 
         return produtosRepositoryJpa.save(produto);
@@ -53,9 +72,16 @@ public class ProdutoController {
 
     @PutMapping("{id}")
     @ResponseStatus(NO_CONTENT)
-    public void update(@PathVariable Integer id,
+    @ApiOperation("Atulizar os detalhes de um produto")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Produto encontrado"),
+            @ApiResponse(code = 404, message = "Produto não encontrado para o ID informado")
+    })
+    public void update(@PathVariable
+                       @ApiParam("Id do produto")
+                       Integer id,
                        @RequestBody
-                       @Valid Produto produto){
+                       @Valid Produto produto) {
         //TODO: @Valid: é uma anotation do spring para fazer as validações de acordo como foi definido pela sua Entity.
         produtosRepositoryJpa
                 .findById(id)
@@ -70,7 +96,14 @@ public class ProdutoController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(NO_CONTENT)
-    public void delete(@PathVariable Integer id){
+    @ApiOperation("Deletar um produto")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Produto produto deletado com sucesso"),
+            @ApiResponse(code = 404, message = "Produto não encontrado para o ID informado para deletar")
+    })
+    public void delete(@PathVariable
+                       @ApiParam("Id do produto")
+                       Integer id) {
         produtosRepositoryJpa
                 .findById(id)
                 .map(p -> {

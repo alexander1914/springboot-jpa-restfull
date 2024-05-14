@@ -1,9 +1,8 @@
-package io.github.alexander1914.controller;
+package io.github.alexander1914.rest.controller;
 
 import io.github.alexander1914.dto.ApiErrors;
 import io.github.alexander1914.exception.PedidoNaoEncontradoException;
 import io.github.alexander1914.exception.RegraNegocioException;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

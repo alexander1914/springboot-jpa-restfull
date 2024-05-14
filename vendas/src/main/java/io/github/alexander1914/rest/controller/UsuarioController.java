@@ -1,4 +1,4 @@
-package io.github.alexander1914.controller;
+package io.github.alexander1914.rest.controller;
 
 import io.github.alexander1914.domain.entity.Usuario;
 import io.github.alexander1914.dto.CredenciaisDTO;
@@ -6,6 +6,9 @@ import io.github.alexander1914.dto.TokenDTO;
 import io.github.alexander1914.exception.SenhaInvalidaException;
 import io.github.alexander1914.security.jwt.JwtService;
 import io.github.alexander1914.service.impl.UsuarioServiceImpl;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 
 @RestController
 @RequestMapping("api/usuarios")
@@ -31,14 +33,27 @@ public class UsuarioController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Usuario salvar(@RequestBody @Valid Usuario usuario){
+    @ApiOperation("Salvar um novo usuário")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Usuário salvo com sucesso"),
+            @ApiResponse(code = 400, message = "Erro de validação")
+    })
+    public Usuario salvar(@RequestBody
+                          @Valid
+                          Usuario usuario) {
         String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
         usuario.setSenha(senhaCriptografada);
         return usuarioService.salvar(usuario);
     }
 
     @PostMapping("/auth")
-    public TokenDTO autenticar(@RequestBody CredenciaisDTO credenciaisDTO) {
+    @ApiOperation("Para criar uma autorização para o usuário")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Usuário salvo com sucesso"),
+            @ApiResponse(code = 400, message = "Erro de validação")
+    })
+    public TokenDTO autenticar(@RequestBody
+                               CredenciaisDTO credenciaisDTO) {
         try {
             Usuario usuario = Usuario.builder()
                     .login(credenciaisDTO.getLogin())
